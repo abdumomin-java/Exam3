@@ -1,5 +1,20 @@
-package uz.pdp.online;public class Main {
+package uz.pdp.online;
+
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import uz.pdp.online.exam.Exam_bot;
+
+public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+
+        try {
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            telegramBotsApi.registerBot(new Exam_bot());
+
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
     }
 }
