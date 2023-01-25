@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.imageio.ImageIO;
@@ -35,12 +36,19 @@ public class Exam_bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             Message message = update.getMessage();
             User user = UserService.getUserService().getUserWithChatId(message.getChatId().toString());
-            if ( message.getText() != null && message.getText().equals("/start")) {
+            if (message.getText() != null && message.getText().equals("/delete")) {
+                ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+                replyKeyboardRemove.setRemoveKeyboard(true);
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText(" ReplyKeyboard olib tashlandi!!! Qaytadan /start bosing.");
+                sendMessage.setChatId(message.getChatId());
+                sendMessage.setReplyMarkup(replyKeyboardRemove);
+                sendBot(sendMessage);
+            } else if (message.getText() != null && message.getText().equals("/start")) {
                 sendBot(UserService.getUserService().openUserMenu(message));
             } else if (user.getBotState().equals(BotState.OPEN_QR_GENERATE)) {
                 sendBot(UserService.getUserService().generatingQrPhotos(message));
-            }
-            else if (user.getBotState().equals(BotState.OPEN_READ_QR)) {
+            } else if (user.getBotState().equals(BotState.OPEN_READ_QR)) {
 
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setChatId(message.getChatId());
