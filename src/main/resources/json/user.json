@@ -1,10 +1,10 @@
 [
   {
     "chatId": "1752907421",
-    "botState": "OPEN_READ_QR"
+    "botState": "OPEN_MENU"
   },
   {
-    "chatId": "5437700487",
-    "botState": "OPEN_READ_QR"
+    "chatId": "5575152637",
+    "botState": "OPEN_MENU"
   }
 ]

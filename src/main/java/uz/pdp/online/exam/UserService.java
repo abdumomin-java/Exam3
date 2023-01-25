@@ -57,41 +57,6 @@ public class UserService {
         updateUserState(message.getChatId().toString(), BotState.OPEN_MENU);
         return sendPhoto;
     }
-
-    public SendMessage readingPhotos(Message message){
-        Exam_bot examBot = new Exam_bot();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId());
-        List<PhotoSize> photo = message.getPhoto();
-        if (photo != null && !photo.isEmpty()){
-
-            photo.sort(Comparator.comparing(PhotoSize::getFileSize).reversed());
-            PhotoSize photoSize = photo.get(0);
-            GetFile getFile = new GetFile(photoSize.getFileId());
-            try {
-                org.telegram.telegrambots.meta.api.objects.File execute = examBot.execute(getFile);
-                String s = execute.getFilePath().split("\\.")[1];
-                UUID uuid = UUID.randomUUID();
-                File file = new File("src/main/resources/downloadPhotos/photo_" + uuid + "." + s);
-                examBot.downloadFile(execute, file);
-
-                BufferedImage bfrdImgobj = ImageIO.read(file);
-                LuminanceSource source = new BufferedImageLuminanceSource(bfrdImgobj);
-                BinaryBitmap binarybitmapobj = new BinaryBitmap(new HybridBinarizer(source));
-                Result resultobj = new MultiFormatReader().decode(binarybitmapobj);
-                sendMessage.setText(" Result: " + resultobj.getText());
-//                System.out.println("Data Stored In our QR Code" +"  " + resultobj.getText());
-
-            } catch (TelegramApiException | NotFoundException | IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-        sendMessage.setReplyMarkup(getUserMenuButton());
-        updateUserState(message.getChatId().toString(), BotState.OPEN_MENU);
-        return sendMessage;
-    }
-
     public SendMessage readBeginQR(CallbackQuery callbackQuery){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(callbackQuery.getMessage().getChatId());

@@ -35,7 +35,7 @@ public class Exam_bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             Message message = update.getMessage();
             User user = UserService.getUserService().getUserWithChatId(message.getChatId().toString());
-            if (message.getText().equals("/start")) {
+            if ( message.getText() != null && message.getText().equals("/start")) {
                 sendBot(UserService.getUserService().openUserMenu(message));
             } else if (user.getBotState().equals(BotState.OPEN_QR_GENERATE)) {
                 sendBot(UserService.getUserService().generatingQrPhotos(message));
@@ -57,13 +57,11 @@ public class Exam_bot extends TelegramLongPollingBot {
                             java.io.File file = new java.io.File("src/main/resources/downloadPhotos/photo_" + uuid + ".jpg");
                             downloadFile(file1, file);
 
-
-                            BufferedImage bfrdImgobj = ImageIO.read(file);
+                            BufferedImage bfrdImgobj = ImageIO.read(new java.io.File(file.getPath()));
                             LuminanceSource source = new BufferedImageLuminanceSource(bfrdImgobj);
                             BinaryBitmap binarybitmapobj = new BinaryBitmap(new HybridBinarizer(source));
                             Result resultobj = new MultiFormatReader().decode(binarybitmapobj);
                             sendMessage.setText(" Result: " + resultobj.getText());
-//                System.out.println("Data Stored In our QR Code" +"  " + resultobj.getText());
 
                         } catch (TelegramApiException | NotFoundException | IOException e) {
                             e.printStackTrace();
@@ -75,9 +73,15 @@ public class Exam_bot extends TelegramLongPollingBot {
                 } else {
                     sendMessage.setText("Photo not found");
                 }
-
                 sendMessage.setReplyMarkup(UserService.getUserService().getUserMenuButton());
                 UserService.getUserService().updateUserState(message.getChatId().toString(), BotState.OPEN_MENU);
+                sendBot(sendMessage);
+            } else {
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(message.getChatId());
+                sendMessage.setText("Admin ga murojaat uchun Rahmat!\uD83E\uDD1D \n Admin bundan mamnun bo`ladi!\uD83D\uDC4D✊ \n Admin username\uD83D\uDE0E: https://t.me/Mavlonovich_java");
+                UserService.getUserService().updateUserState(message.getChatId().toString(), BotState.OPEN_MENU);
+                sendMessage.setReplyMarkup(UserService.getUserService().getUserMenuButton());
                 sendBot(sendMessage);
             }
 
@@ -90,46 +94,8 @@ public class Exam_bot extends TelegramLongPollingBot {
             } else if (data.equals("read_qr_code") && user.getBotState().equals(BotState.OPEN_MENU)) {
                 sendBot(UserService.getUserService().readBeginQR(callbackQuery));
             }
-
         }
     }
-
-    public SendMessage readingPhotos15(Message message) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId());
-        if (message.hasPhoto()) {
-
-            List<PhotoSize> photo = message.getPhoto();
-            if (photo != null && !photo.isEmpty()) {
-                photo.sort(Comparator.comparing(PhotoSize::getFileSize).reversed());
-                PhotoSize photoSize = photo.get(0);
-                GetFile getFile = new GetFile(photoSize.getFileId());
-                try {
-                    File file1 = execute(getFile);
-                    UUID uuid = UUID.randomUUID();
-                    java.io.File file = new java.io.File("src/main/resources/downloadPhotos/photo_" + uuid + "." + file1.getFilePath().split("\\.")[1]);
-                    downloadFile(file1, file);
-
-                    BufferedImage bfrdImgobj = ImageIO.read(file);
-                    LuminanceSource source = new BufferedImageLuminanceSource(bfrdImgobj);
-                    BinaryBitmap binarybitmapobj = new BinaryBitmap(new HybridBinarizer(source));
-                    Result resultobj = new MultiFormatReader().decode(binarybitmapobj);
-                    sendMessage.setText(" Result: " + resultobj.getText());
-//                System.out.println("Data Stored In our QR Code" +"  " + resultobj.getText());
-
-                } catch (TelegramApiException | NotFoundException | IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                sendMessage.setText("1515");
-            }
-        }
-        sendMessage.setReplyMarkup(UserService.getUserService().getUserMenuButton());
-        UserService.getUserService().updateUserState(message.getChatId().toString(), BotState.OPEN_MENU);
-        return sendMessage;
-    }
-
 
     public void sendBot(Object obj) {
         try {
