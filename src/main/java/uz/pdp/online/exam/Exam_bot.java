@@ -23,12 +23,12 @@ public class Exam_bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "5545958714:AAFzeHx-LA2OFejBM3gwWRIW5RYbPhM9Gmo";
+        return "YOUR_BOT_TOKEN";
     }
 
     @Override
     public String getBotUsername() {
-        return "https://t.me/abdumominbot";
+        return "YOUR_BOT_USERNAME";
     }
 
     @Override
